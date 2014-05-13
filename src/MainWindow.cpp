@@ -57,6 +57,7 @@
 #include "MergeActivityWizard.h"
 #include "BatchExportDialog.h"
 #include "TwitterDialog.h"
+#include "StravaUploadDialog.h"
 #include "ShareDialog.h"
 #include "TtbDialog.h"
 #include "WithingsDownload.h"
@@ -589,6 +590,10 @@ MainWindow::MainWindow(const QDir &home)
     rideMenu->addAction(tr("&Upload to TrainingPeaks"), this, SLOT(uploadTP()), tr("Ctrl+U"));
     rideMenu->addAction(tr("Down&load from TrainingPeaks..."), this, SLOT(downloadTP()), tr("Ctrl+L"));
 #endif
+
+    stravaAction = new QAction(tr("Upload to Strava..."), this);
+    connect(stravaAction, SIGNAL(triggered(bool)), this, SLOT(uploadStrava()));
+
 
 #ifdef GC_HAVE_LIBOAUTH
     tweetAction = new QAction(tr("Tweet Ride"), this);
@@ -1655,6 +1660,23 @@ MainWindow::exportMetrics()
     currentTab->context->athlete->metricDB->writeAsCSV(fileName);
 }
 
+/*----------------------------------------------------------------------
+ * Strava
+ *--------------------------------------------------------------------*/
+void
+MainWindow::uploadStrava()
+{
+    QTreeWidgetItem *_item = currentTab->context->athlete->treeWidget->currentItem();
+    if (_item==NULL || _item->type() != RIDE_TYPE) return;
+
+    RideItem *item = dynamic_cast<RideItem*>(_item);
+
+    if (item) { // menu is disabled anyway, but belt and braces
+        StravaUploadDialog *stravaUploadDialog = new StravaUploadDialog(currentTab->context, item);
+        //stravaUploadDialog->setWindowModality(Qt::ApplicationModal);
+        //stravaUploadDialog->exec();
+    }
+}
 /*----------------------------------------------------------------------
  * Twitter
  *--------------------------------------------------------------------*/

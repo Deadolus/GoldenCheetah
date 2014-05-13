@@ -31,8 +31,8 @@
 #include "DBAccess.h"
 #include "TcxRideFile.h"
 
-StravaUploadDialog::StravaUploadDialog(MainWindow *mainWindow, RideItem *item) :
-    mainWindow(mainWindow)
+StravaUploadDialog::StravaUploadDialog(Context *context, RideItem *item) :
+    context(context)
 {
     STRAVA_URL1 = "http://www.strava.com/api/v1/";
     STRAVA_URL2 = "http://www.strava.com/api/v2/";
@@ -108,6 +108,7 @@ StravaUploadDialog::StravaUploadDialog(MainWindow *mainWindow, RideItem *item) :
     //connect(totalDistanceChk, SIGNAL(stateChanged(int)),  this, SLOT(onCheck(int)));
 
     //uploadToStrava();
+
 }
 
 
@@ -216,13 +217,13 @@ StravaUploadDialog::requestLogin()
     progressLabel->setText(tr("Login..."));
     progressBar->setValue(5);
 
-    QString username = appsettings->cvalue(mainWindow->cyclist, GC_STRUSER).toString();
-    QString password = appsettings->cvalue(mainWindow->cyclist, GC_STRPASS).toString();
+    QString username = appsettings->cvalue(context->athlete->cyclist, GC_STRUSER).toString();
+    QString password = appsettings->cvalue(context->athlete->cyclist, GC_STRPASS).toString();
 
     QNetworkAccessManager networkMgr;
     QEventLoop eventLoop;
-    connect(&networkMgr, SIGNAL(finished(QNetworkReply*)), this, SLOT(requestLoginFinished(QNetworkReply*)));
-    connect(&networkMgr, SIGNAL(finished(QNetworkReply *)), &eventLoop, SLOT(quit()));
+    //connect(&networkMgr, SIGNAL(finished(QNetworkReply*)), this, SLOT(requestLoginFinished(QNetworkReply*)));
+    //connect(&networkMgr, SIGNAL(finished(QNetworkReply *)), &eventLoop, SLOT(quit()));
 
     QByteArray data;
     /*data += "{\"email\": \"" + username + "\",";
@@ -245,7 +246,7 @@ StravaUploadDialog::requestLogin()
     networkMgr.post( request, data);
     eventLoop.exec();
 }
-
+/*
 void
 StravaUploadDialog::requestLoginFinished(QNetworkReply *reply)
 {
@@ -399,7 +400,7 @@ StravaUploadDialog::requestUpload()
 
         params.addQueryItem("token", token);
         params.addQueryItem("type", "tcx");
-        params.addQueryItem("data", reader.toByteArray(mainWindow, ride->ride(), altitudeChk->isChecked(), powerChk->isChecked(), heartrateChk->isChecked(), cadenceChk->isChecked()));
+        params.addQueryItem("data", reader.toByteArray(context, ride->ride(), altitudeChk->isChecked(), powerChk->isChecked(), heartrateChk->isChecked(), cadenceChk->isChecked()));
         data = params.encodedQuery();
 
         QUrl url = QUrl(STRAVA_URL2 + "/upload");
@@ -557,3 +558,4 @@ StravaUploadDialog::requestSearchRideFinished(QNetworkReply *reply)
 
     //qDebug() << reply->readAll();
 }
+*/

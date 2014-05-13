@@ -167,6 +167,7 @@ class MainWindow : public QMainWindow
         void exportRide();
         void exportBatch();
         void exportMetrics();
+        void uploadStrava();
 #ifdef GC_HAVE_LIBOAUTH
         void tweetRide();
         void share();
@@ -237,6 +238,7 @@ class MainWindow : public QMainWindow
         QAction *showhideToolbar;
         QAction *showhideTabbar;
 
+        QAction *stravaAction;
         QAction *tweetAction;
         QAction *shareAction;
         QAction *ttbAction;

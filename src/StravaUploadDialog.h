@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QtGui>
+#include <QNetworkReply>
 #include "MainWindow.h"
 #include "RideItem.h"
 
@@ -37,7 +38,7 @@ class StravaUploadDialog : public QDialog
     G_OBJECT
 
 public:
-     StravaUploadDialog(MainWindow *mainWindow, RideItem *item);
+     StravaUploadDialog(Context *context, RideItem *item);
 
 signals:
 
@@ -48,28 +49,29 @@ private slots:
      void getActivityFromStrava();
 
      void requestLogin();
-     void requestLoginFinished(QNetworkReply *reply);
+    // void requestLoginFinished(QNetworkReply *reply);
 
-     void requestUpload();
-     void requestUploadFinished(QNetworkReply *reply);
+    // void requestUpload();
+    // void requestUploadFinished(QNetworkReply *reply);
 
-     void requestVerifyUpload();
-     void requestVerifyUploadFinished(QNetworkReply *reply);
+    // void requestVerifyUpload();
+     //void requestVerifyUploadFinished(QNetworkReply *reply);
 
-     void requestSearchRide();
-     void requestSearchRideFinished(QNetworkReply *reply);
+     //void requestSearchRide();
+   //  void requestSearchRideFinished(QNetworkReply *reply);
 
-     void okClicked();
-     void cancelClicked();
+     //void okClicked();
+     //void cancelClicked();
 
 private:
+     Context *context;
      QDialog *dialog;
 
      QPushButton *uploadButton;
      QPushButton *searchActivityButton;
      QPushButton *getActivityButton;
      QPushButton *cancelButton;
-     MainWindow *mainWindow;
+
 
      //QCheckBox *gpsChk;
      QCheckBox *altitudeChk;
@@ -91,7 +93,7 @@ private:
      QString uploadStatus;
      QString uploadProgress;
 
-     QString STRAVA_URL1, STRAVA_URL2, STRAVA_URL_SSL;
+     QString STRAVA_URL1, STRAVA_URL2, STRAVA_URL3,  STRAVA_URL_SSL;
 
      bool overwrite, loggedIn, uploadSuccessful;
 };
