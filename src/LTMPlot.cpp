@@ -3014,6 +3014,12 @@ LTMPlot::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
+void
+LTMPlot::replot() {
+    QwtIndPlotMarker::resetDrawnLabels();
+    QwtPlot::replot();
+}
+
 int
 LTMPlot::groupForDate(QDate date, int groupby)
 {

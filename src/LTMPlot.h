@@ -62,6 +62,7 @@ class LTMPlot : public QwtPlot
         void pointClicked(QwtPlotCurve*, int); // point clicked
         void configChanged(qint32);
         bool eventFilter(QObject *, QEvent *);
+        virtual void replot();
 
     protected:
         friend class ::LTMPlotBackground;
