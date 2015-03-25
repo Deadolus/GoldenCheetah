@@ -142,30 +142,30 @@ private:
     /* PrivateData *d_data; */
     class Matrix {
         public:
-            Matrix(unsigned rows, unsigned cols);
+            Matrix(unsigned long rows, unsigned long cols);
             // Subscript operators often come in pairs
-            bool& operator() (unsigned row, unsigned col);        
+            bool& operator() (unsigned long row, unsigned long col);        
             // Subscript operators often come in pairs
-            bool  operator() (unsigned row, unsigned col) const;  
+            bool  operator() (unsigned long row, unsigned long col) const;  
             ~Matrix();                              // Destructor
             Matrix(const Matrix& m);               // Copy constructor
             Matrix& operator= (const Matrix& m);   // Assignment operator
-            void set(unsigned row, unsigned col, bool value);
+            void set(unsigned long row, unsigned long col, bool value);
             /** init the Memory */
             void init();
             /** reset the Matrix (free memory)*/
             void reset();
-            int resize(unsigned row, unsigned col);
+            int resize(unsigned long row, unsigned long col);
             int cols();
             int rows();
             uintptr_t canvasId();
             void setCanvasId(uintptr_t canvasId);
-            void drawnAt(unsigned x, unsigned y, unsigned xsize, unsigned ysize);
-            bool isFree(unsigned x, unsigned y, unsigned xsize, unsigned ysize);
+            void drawnAt(unsigned long x, unsigned long y, unsigned long xsize, unsigned long ysize);
+            bool isFree(unsigned long x, unsigned long y, unsigned long xsize, unsigned long ysize);
             // ...
         private:
-            unsigned m_rows;
-            unsigned m_cols;
+            unsigned long m_rows;
+            unsigned long m_cols;
             uintptr_t m_canvasId;
             //holds data of where is drawn dimension 1: rows dimension 2: cols
             //e.g. m_data[y*m_rows+cols]

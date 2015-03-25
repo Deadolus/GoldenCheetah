@@ -23,7 +23,7 @@ QwtIndPlotMarker::Matrix* QwtIndPlotMarker::m_drawnPixels = new QwtIndPlotMarker
 /* QwtIndPlotMarker::m_data = nullptr; */
 
 
-    inline QwtIndPlotMarker::Matrix::Matrix(unsigned rows, unsigned cols): 
+    inline QwtIndPlotMarker::Matrix::Matrix(unsigned long rows, unsigned long cols): 
         m_rows(rows), m_cols(cols)
       //, m_data ← initialized below after the if...throw statement
 {
@@ -41,7 +41,7 @@ inline QwtIndPlotMarker::Matrix::~Matrix()
     reset();
 }
 
-inline bool& QwtIndPlotMarker::Matrix::operator() (unsigned row, unsigned col)
+inline bool& QwtIndPlotMarker::Matrix::operator() (unsigned long row, unsigned long col)
 {
     /* if (row >= m_rows || col >= m_cols) */
     /*     return 0; */
@@ -54,7 +54,7 @@ inline bool& QwtIndPlotMarker::Matrix::operator() (unsigned row, unsigned col)
         return m_data[m_rows*row + col];
 }
 
-inline bool QwtIndPlotMarker::Matrix::operator() (unsigned row, unsigned col) const
+inline bool QwtIndPlotMarker::Matrix::operator() (unsigned long row, unsigned long col) const
 {
     if ((row >= m_rows || col >= m_cols)||(!m_data))
         printf("Error\n");
@@ -65,7 +65,7 @@ inline bool QwtIndPlotMarker::Matrix::operator() (unsigned row, unsigned col) co
 }
 
 inline void QwtIndPlotMarker::Matrix::init() {
-    for (unsigned int i = 0; i < m_cols*m_rows; i++) {
+    for (unsigned long i = 0; i < m_cols*m_rows; i++) {
         m_data[i]=false;
     }
 }
@@ -78,13 +78,16 @@ inline void QwtIndPlotMarker::Matrix::reset() {
     m_cols = 0;
 }
 
-int QwtIndPlotMarker::Matrix::resize(unsigned row, unsigned col) {
+int QwtIndPlotMarker::Matrix::resize(unsigned long row, unsigned long col) {
     delete[] m_data;
 
     m_data = new bool[row * col]();
     if(m_data) {
         m_rows = row;
         m_cols = col;
+    //TODO: should not have to init:
+    init();
+    printf("-->New size: %lu, %lu\n", m_rows, m_cols);
         return 0;
     }
     else {
@@ -106,29 +109,28 @@ uintptr_t QwtIndPlotMarker::Matrix::canvasId(){
 void QwtIndPlotMarker::Matrix::setCanvasId(uintptr_t vcanvasId){
     m_canvasId = vcanvasId;
 }
-void QwtIndPlotMarker::Matrix::set(unsigned row, unsigned col, bool value) {
+void QwtIndPlotMarker::Matrix::set(unsigned long row, unsigned long col, bool value) {
     m_data[m_rows*row+col] = value;
 }
 
-void QwtIndPlotMarker::Matrix::drawnAt(unsigned row, unsigned col, unsigned ysize, unsigned xsize){
+void QwtIndPlotMarker::Matrix::drawnAt(unsigned long row, unsigned long col, unsigned long ysize, unsigned long xsize){
     printf("drawn: %u, %u:%u, %u", row, col, row+ysize, col+xsize);
     if((row>=m_rows)||(col>=m_cols))
         return;
-    for (unsigned y = row; (y < (ysize+row))&&(y<m_rows); y++) {
-        for (unsigned x = col; (x < (xsize+col))&&(x<m_cols); x++) {
+    for (unsigned long y = row; (y < (ysize+row))&&(y<m_rows); y++) {
+        for (unsigned long x = col; (x < (xsize+col))&&(x<m_cols); x++) {
             m_data[m_rows*y+x] = true;
         }
     }
 }
-//TODO: remove max again
-bool QwtIndPlotMarker::Matrix::isFree(unsigned row, unsigned col, unsigned ysize, unsigned xsize){
+bool QwtIndPlotMarker::Matrix::isFree(unsigned long row, unsigned long col, unsigned long ysize, unsigned long xsize){
     printf("isfree: %u, %u:%u, %u", row, col, row+ysize, col+xsize);
     bool ret = true;
     if((row>=m_rows)||(col>=m_cols))
         return ret;
-    for (unsigned y = row; (y < (ysize+row))&&ret&&(y<m_rows);y++) {
-        for (unsigned x = col; (x < (xsize+col))&&ret&&(x<m_cols); x++) {
-            ret = (m_data[m_rows*y+x] == false);
+    for (unsigned long y = row; (y < (ysize+row))&&ret&&(y<m_rows);y++) {
+        for (unsigned long x = col; (x < (xsize+col))&&ret&&(x<m_cols); x++) {
+            ret = !(m_data[m_rows*y+x]);
         }
     }
     return ret;
@@ -347,24 +349,17 @@ void QwtIndPlotMarker::draw( QPainter *painter,
 void QwtIndPlotMarker::drawLabel( QPainter *painter,
     const QRectF &canvasRect, const QPointF &pos ) const
 {
+        printf("canvas: %lu\n", reinterpret_cast<uintptr_t>(&canvasRect));
     if(reinterpret_cast<uintptr_t>(painter)!=m_drawnPixels->canvasId()){
         m_drawnPixels->setCanvasId(reinterpret_cast<uintptr_t>(painter));
         m_drawnPixels->init();
+        printf("new painter: %lu\n", m_drawnPixels->canvasId());
     }
     /* printf("%d, %d\n", reinterpret_cast<uintptr_t>(painter), reinterpret_cast<uintptr_t>(&canvasRect)); */
-    printf("in drawLabel %lf, %lf\n",canvasRect.width(),canvasRect.height());
-    if(((*m_drawnPixels).cols()!=canvasRect.width())&&((*m_drawnPixels).rows()!=canvasRect.height())){
+    printf("in drawLabel %lf, %lf\n",canvasRect.height(),canvasRect.width());
+    if(((*m_drawnPixels).cols()!=canvasRect.width())||((*m_drawnPixels).rows()!=canvasRect.height())){
 m_drawnPixels->resize(canvasRect.height(), canvasRect.width());
-m_drawnPixels->init();//TODO: reset needed?
             }
-    /* m_drawnPixels.reserve(510); */
-    /* m_drawnPixels[0].append(false); */
-    /* m_drawnPixels[0].reserve(510); */
-    /* printf("%d,%d\n",m_drawnPixels.size(),m_drawnPixels.size()); */
-    /* if(this->spacing()!=0){ */
-    /*     m_spacingX = this->spacing(); */
-    /*     m_spacingY = this->spacing(); */
-    /* } */
     if ( this->label().isEmpty() )
         return;
 
